@@ -1,6 +1,6 @@
 <template>
     <div class="flex gap-2 items-center">
-        <p class="tabular-nums">{{ value }}</p>
+        <p class="text-white">{{ value }}</p>
         <div class="select-none flex gap-0">
             <p v-for="_ in value" @click="value = _">★</p>
             <p v-for="_ in 5-value" @click="value += _">☆</p>

@@ -5,12 +5,16 @@
     "you": "You",
     "others": "Others",
     "are-you-sure": "Are you sure?",
+    "this-action-can-not-be-reverted": "This action can not be reverted",
     "successfully-deleted": "Successfully deleted!",
     "something-went-wrong": "Something went wrong",
     "submit": "Submit",
     "alias": "Alias",
     "info": "Information",
-    "fill_these_fields": "Fill these fields",
+    "fill-these-fields": "Fill these fields",
+    "edit": "Edit",
     "continue": "Continue",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "content": "Content",
+    "success": "Success"
 }

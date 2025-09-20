@@ -8,11 +8,11 @@
         {{ t('submit') }}
     </Button>
 
-    <Dialog :open="isDialogOpen">
+    <Dialog v-model:open="isDialogOpen">
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>{{ t('info') }}</DialogTitle>
-                <DialogDescription>{{ t('fill_these_fields') }}</DialogDescription>
+                <DialogDescription>{{ t('fill-these-fields') }}</DialogDescription>
             </DialogHeader>
 
             <Input v-model="alias" :placeholder="t('alias')"/>
@@ -42,10 +42,12 @@ import { ref, computed } from 'vue'
 import Input from '../ui/input/Input.vue';
 import Stars from './Stars.vue';
 import DialogFooter from '../ui/dialog/DialogFooter.vue';
+import { toast } from 'vue-sonner';
 
 const { t } = useI18n()
 
 const props = defineProps(['data', 'class', 'teacherId'])
+const emit = defineEmits(['refresh'])
 
 const isDialogOpen = ref(false)
 
@@ -73,7 +75,11 @@ const send = async () => {
                                   userAlias: alias.value, 
                                   stars: stars.value,
                                   teacherId: props.teacherId } })
-    console.log(res)
+    if(res.status >= 200 && res.status < 300)
+        toast['success'](t('success'))
+    else
+        toast['error'](t('something-went-wrong'))
+    emit('refresh', res.body)
 }
 
 </script>

@@ -11,14 +11,26 @@ export const removeWhiteSpace = content =>
     .trim()
 
 export const apiFetch = (path, config) => {
-  if(config?.body)
+  if(!config)
+    config = {}
+  if(!config.headers) 
+    config.headers = {}
+  if(config.body)
     config.body = JSON.stringify(config.body)
+
+  config.headers['Content-Type'] = 'application/json'
+
   return new Promise((resolve, reject) => fetch(import.meta.env.VITE_BACKEND + path, config)
-    .then(async response => ({
-      status: response.status,
-      body: await response.json(),
-      headers: response.headers
-    }))
+    .then(async response => {
+      let body = null;
+      try { body = await response.json() }
+      catch(err) {}
+      return {
+        status: response.status,
+        body: body,
+        headers: response.headers
+      }
+    })
     .then(resolve)
   )
 }
