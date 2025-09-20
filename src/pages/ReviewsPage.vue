@@ -35,6 +35,12 @@
             <template v-else>
                 <Skeleton v-for="_ in 5" class="w-full h-30"/>
             </template>
+            <Button 
+                v-if="!isLastPage"
+                :disabled="isSeeMoreButtonDisabled" 
+                @click="getReviews"
+                class="w-30 mx-auto" 
+                variant="outline">{{ t('see-more') }}</Button>
         </article>
     </div>
 </template>
@@ -47,19 +53,35 @@ import WriteReviewComponent from '@/components/utils/WriteReviewComponent.vue';
 import { apiFetch } from '@/lib/utils';
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router';
+import Button from '@/components/ui/button/Button.vue';
+import { useI18n } from 'vue-i18n';
 
 const route = useRoute()
+const { t } = useI18n()
 
 const teacher = ref(undefined)
 const my_review = ref(undefined)
 const reviews = ref(undefined)
 
+const isSeeMoreButtonDisabled = ref(false)
+const currentPage = ref(0)
+const isLastPage = ref(false)
+
 const getTeacher = async () =>
     teacher.value = (await apiFetch(`/api/teachers/${route.params.teacherId}/`)).body
-const getReviews = async () =>
-    reviews.value = (await apiFetch(`/api/reviews/${route.params.teacherId}/`)).body
 const getMyReview = async () =>
     my_review.value = (await apiFetch(`/api/reviews/${route.params.teacherId}/mine/`)).body?.review
+
+const getReviews = async () => {
+    isSeeMoreButtonDisabled.value = true
+    const res = (await apiFetch(`/api/reviews/${route.params.teacherId}/?page=${currentPage.value}`)).body
+    reviews.value = { ...reviews.value, 
+                      content: (reviews.value?.content ?? []).concat(res.content) }
+    isLastPage.value = res.last
+    isSeeMoreButtonDisabled.value = false
+    currentPage.value++
+}
+
 
 onMounted(() => {
     getTeacher()
