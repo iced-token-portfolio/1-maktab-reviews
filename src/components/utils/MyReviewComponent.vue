@@ -86,8 +86,8 @@ import DialogFooter from '../ui/dialog/DialogFooter.vue';
 import { toast } from 'vue-sonner';
 import Skeleton from '../ui/Skeleton.vue';
 
-const props = defineProps(['data', 'teacherId', 'class'])
-const emit = defineEmits(['refetchReviews', 'update:data'])
+const props = defineProps(['data', 'teacherId', 'class', 'hidden-review-id'])
+const emit = defineEmits(['update:hidden-review-id', 'update:data'])
 
 const { t } = useI18n()
 
@@ -103,8 +103,8 @@ const remove = () => {
             else
                 toast['error'](t('something-went-wrong'))
             loading.value = false
+            emit('update:hidden-review-id', props.data.id)
             emit('update:data', undefined)
-            emit('refetchReviews')
         })
 }
 

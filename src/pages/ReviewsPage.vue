@@ -17,7 +17,7 @@
                 v-if="my_review" 
                 v-model:data="my_review" 
                 :teacher-id="route.params.teacherId" 
-                @refetch-reviews="getReviews"
+                v-model:hidden-review-id="hidden_review_id"
                 class="my-5"/>
             <WriteReviewComponent 
                 v-else 
@@ -30,7 +30,7 @@
                 <ReviewComponent 
                     v-for="review in reviews.content" 
                     :data="review" 
-                    v-show="review.id !== (my_review?.id ?? -1)"/>
+                    v-show="review.id !== (my_review?.id ?? -1) && review.id !== hidden_review_id"/>
             </template>
             <template v-else>
                 <Skeleton v-for="_ in 5" class="w-full h-30"/>
@@ -58,6 +58,8 @@ import { useI18n } from 'vue-i18n';
 
 const route = useRoute()
 const { t } = useI18n()
+
+const hidden_review_id = ref(0)
 
 const teacher = ref(undefined)
 const my_review = ref(undefined)
