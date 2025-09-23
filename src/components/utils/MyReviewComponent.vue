@@ -1,10 +1,10 @@
 <template>
     <div :class="cn(
-        'border-accent/20 border-1 p-4 rounded-md',
+        'border-accent border-1 p-4 rounded-xl',
         props.class
     )">
-        <div class="flex justify-between items-center mb-1">
-            <h1 class="mb-2">Your review</h1>
+        <div class="flex justify-between items-center mb-1" v-if="!loading">
+            <h1 class="mb-2">{{ t('your-review') }}</h1>
             <div class="flex gap-1">
                 <Button variant="outline" class="h-auto aspect-square" @click="isDialogOpen = true">
                     <PencilIcon class="size-3"/>
@@ -14,7 +14,17 @@
                 </Button>
             </div>
         </div>
-        <ReviewComponent :data="data"/>
+        <div v-else>
+            <div class="flex items-center">
+                <h1>{{ t('your-review') }}</h1>
+                <div class="flex ml-auto w-fit mb-1 gap-1">
+                    <Skeleton class="size-10"/>
+                    <Skeleton class="size-10"/>
+                </div>
+            </div>
+        </div>
+        <ReviewComponent :data="data" v-if="!loading"/>
+        <Skeleton v-else class="h-30 w-full"/>
     </div>
 
     <Dialog v-model:open="isDialogOpen">
@@ -51,7 +61,7 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import Button from '../ui/button/Button.vue';
 import ReviewComponent from './ReviewComponent.vue';
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline';
@@ -74,9 +84,10 @@ import Input from '../ui/input/Input.vue';
 import Stars from './Stars.vue';
 import DialogFooter from '../ui/dialog/DialogFooter.vue';
 import { toast } from 'vue-sonner';
+import Skeleton from '../ui/Skeleton.vue';
 
 const props = defineProps(['data', 'teacherId', 'class'])
-const emit = defineEmits(['refresh'])
+const emit = defineEmits(['refetchReviews', 'update:data'])
 
 const { t } = useI18n()
 
@@ -84,20 +95,27 @@ const isAlertDialogOpen = ref(false)
 const isDialogOpen = ref(false)
 
 const remove = () => {
+    loading.value = true
     apiFetch(`/api/reviews/${props.teacherId}/mine/`, { method: 'DELETE' })
         .then(res => {
             if(res.status >= 200 && res.status < 300)
                 toast['success'](t('successfully-deleted'))
             else
                 toast['error'](t('something-went-wrong'))
-            emit('refresh', undefined)
+            loading.value = false
+            emit('update:data', undefined)
+            emit('refetchReviews')
         })
 }
+
+const loading = ref(false)
 
 const new_content = ref(props.data.content)
 const new_alias = ref(props.data.userAlias)
 const new_stars = ref(props.data.stars)
 const edit = () => {
+    isDialogOpen.value = false
+    loading.value = true
     apiFetch(`/api/reviews/${props.teacherId}/mine/`, {
         method: 'PUT',
         body: { 
@@ -110,13 +128,13 @@ const edit = () => {
             toast['success'](t('success'))
         else
             toast['error'](t('soemthing-went-wrong'))
-        emit('refresh', res.body)
-        isDialogOpen.value = false
+        loading.value = false
+        emit('update:data', res.body)
     })
 }
 
 watch(isDialogOpen, (val, oldVal) => {
-    if(!val && oldVal) {
+    if(val && !oldVal) {
         new_content.value = props.data.content
         new_alias.value = props.data.userAlias
         new_stars.value = props.data.stars

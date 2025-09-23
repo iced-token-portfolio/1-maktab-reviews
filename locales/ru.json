@@ -1,3 +1,21 @@
 {
-
+    "teacher-reviews": "Отзывы об учителях",
+    "see-more": "Ещё",
+    "type...": "Напишите здесь...", 
+    "you": "Вы",
+    "others": "Другие",
+    "are-you-sure": "Вы уверены?",
+    "this-action-can-not-be-reverted": "Это действие нельзя отменить",
+    "successfully-deleted": "Успешно удалено!",
+    "something-went-wrong": "Что-то пошло не так",
+    "submit": "Отправить",
+    "alias": "Псевдоним",
+    "info": "Информация",
+    "fill-these-fields": "Заполните эти поля",
+    "edit": "Редактировать",
+    "continue": "Продолжить",
+    "cancel": "Отмена",
+    "content": "Содержание",
+    "success": "Успех",
+    "your-review": "Ваш отзыв"
 }

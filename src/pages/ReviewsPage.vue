@@ -15,17 +15,17 @@
         <div class="mt-3">
             <MyReviewComponent 
                 v-if="my_review" 
-                :data="my_review" 
+                v-model:data="my_review" 
                 :teacher-id="route.params.teacherId" 
-                class="my-5" 
-                @refresh="new_review => my_review = new_review"/>
+                @refetch-reviews="getReviews"
+                class="my-5"/>
             <WriteReviewComponent 
                 v-else 
                 :teacher-id="route.params.teacherId"
                 @refresh="new_review => my_review = new_review"/>
         </div>
 
-        <article class="flex flex-col gap-1 mt-3">
+        <article class="flex flex-col gap-2 mt-3">
             <template v-if="reviews">
                 <ReviewComponent 
                     v-for="review in reviews.content" 

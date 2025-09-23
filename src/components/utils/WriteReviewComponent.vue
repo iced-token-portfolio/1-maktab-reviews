@@ -1,12 +1,14 @@
 <template>
-    <Textarea :class="cn(
-        props.class,
-    )" :placeholder="t('type...')" v-model="content"/>
+    <div v-if="!is_sent">
+        <Textarea :class="cn(
+            props.class,
+        )" :placeholder="t('type...')" v-model="content"/>
 
-    <Button class="ml-auto mt-1 flex" :disabled="!is_content_filled" @click="isDialogOpen=true">
-        <PaperAirplaneIcon class="size-4"/>
-        {{ t('submit') }}
-    </Button>
+        <Button class="ml-auto mt-1 flex" :disabled="!is_content_filled" @click="isDialogOpen=true">
+            <PaperAirplaneIcon class="size-4"/>
+            {{ t('submit') }}
+        </Button>
+    </div> 
 
     <Dialog v-model:open="isDialogOpen">
         <DialogContent>
@@ -49,6 +51,7 @@ const { t } = useI18n()
 const props = defineProps(['data', 'class', 'teacherId'])
 const emit = defineEmits(['refresh'])
 
+const is_sent = ref(false)
 const isDialogOpen = ref(false)
 
 const content = ref('')
@@ -70,6 +73,7 @@ const is_allowed_to_send = computed(() => {
 
 const send = async () => {
     isDialogOpen.value = false
+    is_sent.value = true
     const res = await apiFetch(`/api/reviews/`, 
         { method: 'POST', body: { content: content.value, 
                                   userAlias: alias.value, 
